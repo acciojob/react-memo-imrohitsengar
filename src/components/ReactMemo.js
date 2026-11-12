@@ -19,7 +19,7 @@ const ReactMemo = React.memo(() => {
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
       />
-      <button onClick={handleSubmit}>Add Skill</button>
+      <button onClick={handleSubmit} disabled={inputValue.length <= 5}>Add Skill</button>
       <ul>
         {items.map((item, index) => (
           <li key={index}>{item}</li>

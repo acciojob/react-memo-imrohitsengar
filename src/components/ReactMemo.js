@@ -1,17 +1,40 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 const ReactMemo = React.memo(() => {
   const [inputValue, setInputValue] = useState("");
   const [skills, setSkills] = useState(["HTML", "CSS", "JavaScript", "React"]);
-  const isSubmitDisabled = !inputValue || inputValue.trim().length <= 5;
-  useEffect(() => {}, [inputValue]);
+  const [error, setError] = useState("");
+
+  // Disables the submit button when the input is 5 or fewer characters
+  const isSubmitDisabled = inputValue.length <= 5;
+
+  // Input validation to ensure input is more than 5 characters
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setInputValue(value);
+    if (value.length > 0 && value.length <= 5) {
+      setError("Input must be more than 5 characters");
+    } else {
+      setError("");
+    }
+  };
+
+  // Submission logic checking length (> 5 characters) before adding
   const handleSubmit = (e) => {
     if (e && e.preventDefault) {
       e.preventDefault();
     }
-    if (inputValue && inputValue.trim().length > 5) {
-      setSkills((prevSkills) => [...prevSkills, inputValue.trim()]);
+
+    // Validation: ensure input length is strictly greater than 5 characters
+    if (inputValue.length <= 5) {
+      setError("Input must be more than 5 characters");
+      return;
+    }
+
+    if (inputValue.length > 5) {
+      setSkills((prevSkills) => [...prevSkills, inputValue]);
       setInputValue("");
+      setError("");
     }
   };
 
@@ -23,7 +46,7 @@ const ReactMemo = React.memo(() => {
         data-testid="memo-input"
         type="text"
         value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
+        onChange={handleInputChange}
         placeholder="Enter task (> 5 characters)"
       />
       <button
@@ -35,6 +58,7 @@ const ReactMemo = React.memo(() => {
       >
         Submit
       </button>
+      {error && <p id="error-msg" style={{ color: "red" }}>{error}</p>}
       <ul>
         {skills.map((skill, index) => (
           <li key={index}>{skill}</li>
